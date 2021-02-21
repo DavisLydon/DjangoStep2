@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django import forms
 
-from .models import Choice, Question
+from .models import Choice, Question, Thought
+from .forms import ThoughtForm
 
 
 class ChoiceInline(admin.TabularInline):
@@ -18,4 +20,14 @@ class QuestionAdmin(admin.ModelAdmin):
     list_filter = ['pub_date']
     search_fields = ['question_text']
 
+
+class ThoughtAdmin(admin.ModelAdmin):
+    form = ThoughtForm
+    fieldsets = [
+        (None, {'fields': ['thought']})
+    ]
+    list_display = ('thought',)
+
+
 admin.site.register(Question, QuestionAdmin)
+admin.site.register(Thought, ThoughtAdmin)
