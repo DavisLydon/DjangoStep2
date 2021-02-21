@@ -26,3 +26,11 @@ class Choice(models.Model):
 
     def __str__(self):
         return self.choice_text
+
+
+class Thought(models.Model):
+    thought = models.CharField(max_length=200)
+
+    def __str__(self):
+        return self.thought
+
