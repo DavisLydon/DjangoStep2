@@ -1,10 +1,11 @@
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.urls import reverse
 from django.views import generic
 from django.utils import timezone
 
-from .models import Choice, Question
+from .models import Choice, Question, Thought
+from .forms import ThoughtForm
 
 
 class IndexView(generic.ListView):
@@ -14,6 +15,14 @@ class IndexView(generic.ListView):
     def get_queryset(self):
         """Return the last five published questions."""
         return Question.objects.filter(pub_date__lte=timezone.now()).order_by('-pub_date')[:5]
+
+
+class ThoughtList(generic.ListView):
+    template_name = 'polls/thoughtList.html'
+    context_object_name = 'thought_list'
+
+    def get_queryset(self):
+        return Thought.objects.all()
 
 
 class DetailView(generic.DetailView):
@@ -40,3 +49,15 @@ def vote(request, question_id):
         selected_choice.votes += 1
         selected_choice.save()
         return HttpResponseRedirect(reverse('polls:results', args=(question.id,)))
+
+
+def get_thought(request):
+    if request.method == 'POST':
+        form = ThoughtForm(request.POST)
+        if form.is_valid():
+            t = form.save()
+            thoughts = Thought.objects.all()
+            return render(request, 'polls/thought.html', {'thoughts': thoughts})
+    else:
+        form = ThoughtForm()
+    return render(request, 'polls/thought.html', {'form': form})
